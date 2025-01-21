@@ -1,0 +1,209 @@
+1.1.1 	Copy text from PC to VM
+If using VMware, here is a handy way to copy text from your PC to the VM box:
+If using VMware install vmware tools as it will make copying commands from this document a little easier:
+
+sudo apt-get install open-vm-tools
+sudo apt-get install open-vm-tools-desktop
+
+ 
+2 	Download Docker 
+There are a few ways to install Docker. The first is using the command line and another way uses Ubuntu Software Installer (suitcase icon) to install Docker. 
+
+2.1 	Option 1: Download Docker via command line
+The instructions provided here are adapted from those found on the Docker website. The installation is carried out on an Ubuntu VM as shown.
+
+Begin by updating the APT repository:
+
+sudo apt-get update
+
+APT (Advanced Package Tool) is a package manager with a repository or database of the available packages. A number of useful packages include:
+•	apt-transport-https(allows the use of repos access by https)
+•	ca-certificates(holds up-to-date certificates that are common to everyone)
+•	curl(for downloading/transferring data)
+•	gnupg-agent (daemon for managing secret keys) 
+•	software-properties commons(manages repositories that software can be installed from). 
+
+Install these packages by typing:
+sudo apt-get install apt-transport-https sudo apt-get install ca-certificates
+sudo apt-get install curl
+
+sudo apt-get install gnupg-agent
+sudo apt-get install software-properties-common
+
+
+Check the following folder exists
+ls -al /etc/apt/keyrings
+
+If it does not exist, then make this directory by typing:
+sudo mkdir -p /etc/apt/keyrings
+ 
+
+Once curl is downloaded the GPG key can be downloaded. GPG keys are used to encrypt and decrypt data. If this worked a new key should be in the keylist. To confirm, type the fingerprint command below.
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+Add a stable release
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+Note: If you have any problems or issues with downloading the stable release refer to Appendix A.
+
+ 
+
+Run the update again just to be sure everything is updated 
+sudo apt-get update
+ 
+
+This repository is added as a base. No beta builds are required for this course/module. Update file information from the repository.
+If you have an error in the repository you can clean it using the software updates in a GUI editor or edit the list file directly using
+sudo apt install gedit
+sudo –H gedit /etc/apt/sources.list 
+
+2.1.1 	Docker Community Edition
+Docker Community Edition (CE) provides a standard runtime environment for containers with a common API and CLI. Install Docker community edition: 
+sudo apt install docker-ce
+
+Run a basic container to check that it is working 
+sudo docker run hello-world
+It checks if the HelloWorld image is available locally and it is not as we do not have any images at the min. So it then checks the remote repository and pulls from the library HelloWorld image. If it works you should get a message explaining how Docker generates your container.
+ 
+
+
+
+
+
+
+
+
+ 
+2.1.2 	Docker Compose on Ubuntu 
+Docker Compose is a tool for defining and running multi-container applications. It is the key to unlocking a streamlined and efficient development and deployment experience. With Docker Compose you use a YAML configuration file, known as the Compose file, to configure your application’s services, and then you create and start all the services from your configuration with the Compose CLI.
+Compose works in all environments; production, staging, development, testing, as well as CI workflows. It also has commands for managing the whole lifecycle of your application:
+•	Start, stop, and rebuild services
+•	View the status of running services
+•	Stream the log output of running services
+•	Run a one-off command on a service
+
+Docker Compose is a tool to use Compose file, yaml file - compose.yaml, which creates and configures docker containers.
+The Docker CLI lets you interact with your Docker Compose applications through the docker compose command, and its subcommands. Using the CLI, you can manage the lifecycle of your multi-container applications defined in the compose.yaml file. The CLI commands enable you to start, stop, and configure your applications effortlessly.
+
+As per Docker’s own definition, Docker Compose uses a 3 step process:
+•	“Define your app’s environment with a Dockerfile so it can be reproduced anywhere.
+•	Define the services that make up your application in compose.yaml so they can be run together in an isolated environment.
+•	Run docker-compose up and Compose starts and runs your entire app.”2
+
+2.1.2.1	Download Docker Compose 
+The following command uses curl to download the latest version of docker compose. The command is long so be careful when copying it. Watch for spacing and the backquote which is found on the upper left of the keyboard. This is different to the ordinary quote found on the right of the keyboard. 
+•	uname –s provides the kernel 
+•	name (Linux) uname –m provides the machine name (x86_64)
+
+sudo curl -L https://github.com/docker/compose/releases/tag/v2.32.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+
+ 
+
+Make the docker compose folder executable by applying the chmod command:
+sudo chmod +x /usr/local/bin/docker-compose
+
+ 
+Verify the version of compose to ensure the installation is complete:
+docker --version
+
+ 
+
+
+Lastly, add the user account to the docker group. In this example the user is logged in as helena.
+sudo usermod -aG docker helena
+
+The change doesn’t occur until the user logs out and logs back in again. You will get errors later if you do not log out and log back in again. Check if you have the docker group in the list for the account by typing 
+groups
+Or 
+getent group
+
+At this point you could take a snapshot of the Ubuntu Virtual Machine that you are working on. This becomes a safe restore point where the required software is installed. It is also recommended that you take a clone of the VM if you have room on your external hard-drive.
+
+We do not require Docker to start when booting the system. If we did, we would run:
+sudo sytemctl enable docker
+
+If you reboot the virtual machine you might need to restart the Docker service:
+Check if the service is running
+sudo systemctl status docker.service
+
+Start the service if needed using:
+sudo systemctl start docker.service 
+
+Some useful commands that can be entered at the $ prompt after exiting the container:
+
+Table 1: Useful command to manage containers
+Command	Description
+exit	Exit from inside the container
+docker images 	List the images currently available
+docker ps	List any running containers
+docker ps -a	List any containers that are stopped – the container we just stopped should display
+docker start xxxx	Restart a container, where xxxx is container ID or first few chars of the container ID
+docker attach xxxx	Get back into the bash session within the container, where xxxx is the container ID
+2.2 	Option 2: Download Docker via Ubuntu Software
+Docker can also be installed Ubuntu Software Installer (suitcase icon). Open Ubuntu Software Installer, search for docker and click install(Figure 4).
+ 
+Figure 4: Download Docker via Ubuntu Software
+
+Information about the software is provided on this screen(Figure 5), including how popular it is and how to use it. You should always read this information as the software provides a method to access Docker.  Where Docker is installed and what default settings were chosen will be important later.
+ 
+Figure 5: Docker container runtime details
+
+
+As this version is installed it can only access files in the home directory. Dockerfiles and other files used in commands such as docker build, docker save and docker load need to be held in the home directory. To change the configuration, modify the files in /var/snap/docker/current.
+
+2.2.1 	Add user account to the docker group
+Search for and open a command window (terminal) to add the user account to the docker group. Click the ‘Show Applications’ icon in the bottom left of the screen and type Terminal in the search box.
+
+The command provided in the instructions on the installation screen are typed in. This was shown when selecting Docker from the software installer. Enter the commands as shown below.
+
+By default, Docker is only accessible with root privileges (sudo). If you want to use docker as a regular user, you need to add your user to the docker group.(Figure 6)
+sudo addgroup --system docker
+sudo adduser $USER docker
+newgrp docker
+sudo snap disable docker
+sudo snap enable docker
+Warning: if you add your user to the docker group, it will have similar power as the root user. For details on how this impacts security in your system, see https://docs.docker.com/engine/security/#docker-daemon-attack-surface
+
+
+ 
+Figure 6: Add user account to the Docker group
+Note: Debian is an operating system which is composed primarily of free and open-source software, most of which is under the GNU General Public License, and developed by a group of individuals known as the Debian project. Debian is one of the most popular Linux distributions for personal computers and network servers, and has been used as a base for several other Linux distributions.
+
+2.2.2 	To create and start a container made from a Debian image type
+Create and start a container using the below command in terminal:
+
+sudo docker run -it --name=helenasdeb debian
+
+(“helenasdeb” Call this any name you like, e.g. your own name)
+ 
+Figure 7: Create and start a container from Debian image
+In this example we create a container named helenasdeb (Figure 7) which is made from the Debian image. We want the latest version but we could have described a specific build number if preferred.
+ 
+Figure 8: changed command prompt
+Note:  the change in the command prompt (Figure 8) - this shows us that we are ‘in’ the container, isolated from the main OS. This is bare minimum container for the OS, so there is very little functionality here only what is defined in the image that we just created our container from. 
+
+The change of prompt from $ to # also gives a hint - however if we had chosen to run an Ubuntu container the prompt would not change.
+
+3 	Remove Docker 
+Via command line:
+sudo apt-get remove docker docker-engine docker.io containerd runc
+
+Via Software Store (if installed this way):
+Go to Software Store, search for Docker, click in the green down arrow button
+ 
+Figure 9: UNinstall via Software Store
+4 	Independent Student Activity
+Review and implement at least one of the Docker Compose samples found at this Github directory.
+
+
+
+5 	Appendix A: Errors installing
+If there is an error similar to below when attempting to download a stable release 
+ 
+
+Use the following to resolve:
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7EA0A9C3F273FCD8
+ 
+
+Then re-run the command to get a stable release:
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" 
